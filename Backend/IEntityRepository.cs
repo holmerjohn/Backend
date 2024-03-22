@@ -1,9 +1,9 @@
-﻿using Backend.Models;
+﻿using Backend.Domain;
 
 namespace Backend
 {
     public interface IEntityRepository<T> where T : Entity
     {
-        Task<T?> GeyByIdAsync(Guid? id);
+        Task SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

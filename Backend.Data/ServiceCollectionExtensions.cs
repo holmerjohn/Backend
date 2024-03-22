@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Backend.Data.Repositories;
+using Backend.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.Data
@@ -16,6 +18,8 @@ namespace Backend.Data
 
             services.AddScoped<IDatabaseService, DatabaseService>();
             services.AddScoped(typeof(IEntityRepository<>), typeof(EntityRepository<>));
+            services.AddScoped<IBorrowerRepository, BorrowerRepository>();
+            services.AddScoped<ILoanRepository, LoanRepository>();
 
             return services;
         }

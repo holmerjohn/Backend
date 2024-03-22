@@ -1,4 +1,4 @@
-﻿using Backend.Models;
+﻿using Backend.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,28 +11,13 @@ namespace Backend.Data.Configurations
             builder.ToTable(nameof(Borrower));
 
             builder.Property(e => e.Id)
-                .IsRequired();
-
-            builder.Property(e => e.BirthYear);
-
-
-            builder.Property(e => e.FirstName)
-                .HasMaxLength(100)
+                .IsRequired()
                 .IsUnicode(false);
 
-            builder.Property(e => e.LastName)
-                .HasMaxLength(100)
-                .IsUnicode(false);
+            builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.Address)
-                .HasMaxLength(1000)
-                .IsUnicode(false);
-
-            builder.HasKey(x => x.Id);
-
-            builder.HasOne(borrower => borrower.Loan)
-                .WithMany(loan => loan.Borrowers)
-                .HasForeignKey(borrower => borrower.LoanId);
+            builder.HasMany(borrower => borrower.Loans)
+                .WithMany(loan => loan.Borrowers);
 
         }
     }
