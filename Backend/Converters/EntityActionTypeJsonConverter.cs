@@ -8,7 +8,7 @@ namespace Backend.Converters
     {
         public override EntityActionType Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (Enum.TryParse<EntityActionType>(reader.GetString(), true, out EntityActionType actionType))
+            if (Enum.TryParse(reader.GetString(), true, out EntityActionType actionType))
             {
                 return actionType;
             }

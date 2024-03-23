@@ -1,24 +1,28 @@
 ﻿using Backend.Domain;
 using Backend.Enums;
+using Backend.Repositories;
 using Microsoft.Extensions.Logging;
 
 namespace Backend.Program
 {
-    public class EntityActionProcessor : IEntityActionProcessor
+    public class LoanActionProcessor : ILoanActionProcessor
     {
         private readonly ILoanRepository _loanRepository;
         private readonly IBorrowerRepository _borrowerRepository;
-        private readonly ILogger<EntityActionProcessor> _logger;
+        private readonly IFactEngine _factEngine;
+        private readonly ILogger<LoanActionProcessor> _logger;
         private readonly BackendConfiguration _configuration;
 
-        public EntityActionProcessor(
+        public LoanActionProcessor(
             ILoanRepository loanRepository,
             IBorrowerRepository borrowerRepository,
-            ILogger<EntityActionProcessor> logger,
+            IFactEngine factEngine,
+            ILogger<LoanActionProcessor> logger,
             BackendConfiguration configuration)
         {
             _loanRepository = loanRepository;
             _borrowerRepository = borrowerRepository;
+            _factEngine = factEngine;
             _logger = logger;
             _configuration = configuration;
         }
@@ -27,7 +31,9 @@ namespace Backend.Program
         {
             foreach (var action in actions)
             {
-                IEnumerable<string> loanIdentifiersToProcess = await ApplyActionAsync(action, cancellationToken);
+                IEnumerable<string> affectedLoans = await ApplyActionAsync(action, cancellationToken);
+
+
                 await _loanRepository.SaveChangesAsync();
             }
             

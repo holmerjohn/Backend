@@ -1,10 +1,12 @@
-﻿using Backend.Data;
+﻿using Backend.Converters;
+using Backend.Data;
 using Backend.Domain;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using System.Text.Json;
 
 namespace Backend.Program
 {
@@ -20,25 +22,11 @@ namespace Backend.Program
                 var databaseService = host.Services.GetRequiredService<IDatabaseService>();
                 databaseService.Initialize();
 
-                var backendConfiguration = host.Services.GetRequiredService<BackendConfiguration>();
-                var actionStore = host.Services.GetRequiredService<IActionStore>();
-                var actionProcessor = host.Services.GetRequiredService<IEntityActionProcessor>();
-
-                var filePath = Path.Combine(backendConfiguration.CurrentDirectory, "actions.json");
-                
-                IEnumerable<EntityAction> actions = null;
-                if (File.Exists(filePath))
-                {
-                    using (var fileStream = File.OpenRead(filePath))
-                    {
-                        actions = await actionStore.GetActionsAsync(fileStream);
-                    }
-                }
-                else 
-                {
-                    actions = Enumerable.Empty<EntityAction>();
-                }
-                await actionProcessor.ProcessEntityActionsAsync(actions);
+                /*
+                 * Get the main processing class and run the process
+                 * */
+                var processor = host.Services.GetRequiredService<Orchestrator>();
+                await processor.Run();
             }
         }
 
@@ -55,10 +43,24 @@ namespace Backend.Program
                         loggingBuilder.AddConsole();
                     });
 
+                    services.AddSingleton(new JsonSerializerOptions
+                    {
+                        WriteIndented = true,
+                        Converters =
+                        {
+                            new ConditionComparatorJsonConverter(),
+                            new EntityActionTypeJsonConverter(),
+                            new FactEntityTypeJsonConverter()
+                        }
+                    });
+
                     services.AddSingleton(backendConfiguration);
                     services.AddBackendDataServices(backendConfiguration);
-                    services.AddScoped<IEntityActionProcessor, EntityActionProcessor>();
-                    services.AddScoped<IActionStore, ActionStore>();
+
+                    services.AddScoped<IActionEngine, ActionEngine>();
+                    services.AddScoped<ILoanActionProcessor, LoanActionProcessor>();
+                    services.AddScoped<IFactEngine, FactEngine>();
+                    services.AddScoped<Orchestrator>();
 
                 });
         }

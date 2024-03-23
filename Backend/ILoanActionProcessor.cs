@@ -2,7 +2,7 @@
 
 namespace Backend
 {
-    public interface IEntityActionProcessor
+    public interface ILoanActionProcessor
     {
         Task ProcessEntityActionsAsync(IEnumerable<EntityAction> actions, CancellationToken cancellationToken = default);
     }

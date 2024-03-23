@@ -1,4 +1,5 @@
 ﻿using Backend.Domain;
+using Backend.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Data.Repositories

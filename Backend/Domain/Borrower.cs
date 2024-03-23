@@ -19,7 +19,7 @@
             {
                 property = new BorrowerProperty()
                 {
-                    Id = $"{Id}-{propertyName}",
+                    Id = Guid.NewGuid().ToString(),
                     BorrowerId = Id,
                     Name = propertyName
                 };

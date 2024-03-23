@@ -1,6 +1,5 @@
 ﻿using Backend.Enums;
 using System.Dynamic;
-using System.Text.Json.Serialization;
 
 namespace Backend.Domain
 {
@@ -25,7 +24,7 @@ namespace Backend.Domain
             {
                 property = new LoanProperty()
                 {
-                    Id = $"{Id}-{propertyName}",
+                    Id = Guid.NewGuid().ToString(),
                     LoanId = Id,
                     Name = propertyName
                 };

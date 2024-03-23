@@ -4,6 +4,7 @@
     {
         Null = 1,
         String,
-        Number
+        Number,
+        Boolean
     }
 }

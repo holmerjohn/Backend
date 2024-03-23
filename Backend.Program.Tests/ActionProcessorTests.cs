@@ -16,11 +16,14 @@ namespace Backend.Program.Tests
         public async Task ShouldProcess_CreateLoan()
         {
             var mockLoanRepository = new MockLoanRepository();
-            var loggerMock = new Mock<ILogger<EntityActionProcessor>>();
+            var factEngineMock = new Mock<IFactEngine>();
+            var loggerMock = new Mock<ILogger<LoanActionProcessor>>();
+            
 
-            IEntityActionProcessor processor = new EntityActionProcessor(
+            ILoanActionProcessor processor = new LoanActionProcessor(
                 mockLoanRepository,
                 new MockBorrowerRepository(),
+                factEngineMock.Object,
                 loggerMock.Object,
                 new BackendConfiguration());
 
@@ -42,11 +45,13 @@ namespace Backend.Program.Tests
         {
             var mockLoanRepository = new MockLoanRepository();
             var mockBorrowerRepository = new MockBorrowerRepository();
-            var loggerMock = new Mock<ILogger<EntityActionProcessor>>();
+            var factEngineMock = new Mock<IFactEngine>();
+            var loggerMock = new Mock<ILogger<LoanActionProcessor>>();
 
-            IEntityActionProcessor processor = new EntityActionProcessor(
+            ILoanActionProcessor processor = new LoanActionProcessor(
                 mockLoanRepository,
                 mockBorrowerRepository,
+                factEngineMock.Object,
                 loggerMock.Object,
                 new BackendConfiguration());
 
@@ -71,11 +76,13 @@ namespace Backend.Program.Tests
         public async Task ShouldProcess_SetLoanField()
         {
             var mockLoanRepository = new MockLoanRepository();
-            var loggerMock = new Mock<ILogger<EntityActionProcessor>>();
+            var factEngineMock = new Mock<IFactEngine>();
+            var loggerMock = new Mock<ILogger<LoanActionProcessor>>();
 
-            IEntityActionProcessor processor = new EntityActionProcessor(
+            ILoanActionProcessor processor = new LoanActionProcessor(
                 mockLoanRepository,
                 new MockBorrowerRepository(),
+                factEngineMock.Object,
                 loggerMock.Object,
                 new BackendConfiguration());
 
@@ -103,11 +110,13 @@ namespace Backend.Program.Tests
         {
             var mockLoanRepository = new MockLoanRepository();
             var mockBorrowerRepository = new MockBorrowerRepository();
-            var loggerMock = new Mock<ILogger<EntityActionProcessor>>();
+            var factEngineMock = new Mock<IFactEngine>();
+            var loggerMock = new Mock<ILogger<LoanActionProcessor>>();
 
-            IEntityActionProcessor processor = new EntityActionProcessor(
+            ILoanActionProcessor processor = new LoanActionProcessor(
                 mockLoanRepository,
                 mockBorrowerRepository,
+                factEngineMock.Object,
                 loggerMock.Object,
                 new BackendConfiguration());
 
@@ -139,11 +148,13 @@ namespace Backend.Program.Tests
         {
             var mockLoanRepository = new MockLoanRepository();
             var mockBorrowerRepository = new MockBorrowerRepository();
-            var loggerMock = new Mock<ILogger<EntityActionProcessor>>();
+            var factEngineMock = new Mock<IFactEngine>();
+            var loggerMock = new Mock<ILogger<LoanActionProcessor>>();
 
-            IEntityActionProcessor processor = new EntityActionProcessor(
+            ILoanActionProcessor processor = new LoanActionProcessor(
                 mockLoanRepository,
                 mockBorrowerRepository,
+                factEngineMock.Object,
                 loggerMock.Object,
                 new BackendConfiguration());
 

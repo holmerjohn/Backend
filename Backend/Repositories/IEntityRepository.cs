@@ -1,6 +1,6 @@
 ﻿using Backend.Domain;
 
-namespace Backend
+namespace Backend.Repositories
 {
     public interface IEntityRepository<T> where T : Entity
     {

@@ -18,10 +18,11 @@ namespace Backend.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new BorrowerEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new BorrowerPropertyEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new FactEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new FactConditionEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new LoanEntityTypeConfiguration());
-
-
+            modelBuilder.ApplyConfiguration(new LoanPropertyEntityTypeConfiguration());
         }
-
     }
 }
