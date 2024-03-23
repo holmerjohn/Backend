@@ -19,10 +19,17 @@ namespace Backend.Data.Configurations
                 .HasMaxLength(255)
                 .IsUnicode(false);
 
-            builder.Property(e => e.ValueAsString)
+            builder.Property(e => e.PropertyType)
+                .HasMaxLength(20)
+                .HasConversion<string>();
+            
+            builder.Property(e => e.StringValue)
                 .IsRequired(false)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+
+            builder.Property(e => e.NumberValue)
+                .IsRequired(false);
 
             builder.HasOne(property => property.Borrower)
                 .WithMany(borrower => borrower.BorrowerProperties)

@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Dynamic;
+using System.Text.Json.Serialization;
 
 namespace Backend.Domain
 {
@@ -10,9 +11,9 @@ namespace Backend.Domain
 
         public static Loan CreateLoan(string identifier)
         {
-            return new Loan() 
+            return new Loan()
             {
-                Id =  identifier
+                Id = identifier
             };
         }
 
@@ -27,17 +28,57 @@ namespace Backend.Domain
                     LoanId = Id,
                     Name = propertyName
                 };
-
-                if (value != null)
-                {
-                    property.ValueAsString = value.ToString();
-                }
+                property.SetPropertyValue(value);
                 LoanProperties.Add(property);
             }
             else
             {
-                property.ValueAsString = value?.ToString();
+                property.SetPropertyValue(value);
             }
+        }
+
+        
+        public dynamic ToDynamic()
+        {
+            var loan = new ExpandoObject() as IDictionary<string, object>;
+            var borrowers = Borrowers.Select(borrower => 
+            { 
+                var b = new ExpandoObject() as IDictionary<string,Object>;
+                foreach (var bp in borrower.BorrowerProperties)
+                {
+                    switch (bp.PropertyType)
+                    {
+                        case PropertyType.String:
+                            b.Add(bp.Name, bp.StringValue);
+                            break;
+                        case PropertyType.Number:
+                            b.Add(bp.Name, bp.NumberValue);
+                            break;
+                        case PropertyType.Null:
+                            b.Add(bp.Name, null);
+                            break;
+                    }
+                }
+                return b;
+            }).ToArray();
+
+            foreach (var lp in LoanProperties)
+            {
+                switch (lp.PropertyType)
+                {
+                    case PropertyType.String:
+                        loan.Add(lp.Name, lp.StringValue);
+                        break;
+                    case PropertyType.Number:
+                        loan.Add(lp.Name, lp.NumberValue);
+                        break;
+                    case PropertyType.Null:
+                        loan.Add(lp.Name, null);
+                        break;
+                }
+            }
+            loan.Add("borrowers", borrowers);
+            return loan;
         }
     }
 }

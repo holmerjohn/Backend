@@ -6,12 +6,15 @@ namespace Backend.Domain
     public class EntityAction
     {
         private object _value = null;
+
         [JsonPropertyName("action")]
-        public string ActionAsString { get; init; }
+        public EntityActionType Action { get; init; }
         [JsonPropertyName("loanIdentifier")]
         public string? LoanIdentifier { get; init; }
         [JsonPropertyName("borrowerIdentifier")]
         public string? BorrowerIdentifier { get; init; }
+        [JsonIgnore]
+        public PropertyType PropertyType { get; private set; }
         [JsonPropertyName("field")]
         public string? Field { get; init; }
         [JsonPropertyName("value")]
@@ -20,47 +23,52 @@ namespace Backend.Domain
             get { return _value; }
             init
             {
-                if (value == null)
-                {
-                    _value = null;
-                    return;
-                }
-                if (value.GetType() == typeof(JsonElement))
+                if (value?.GetType() == typeof(JsonElement))
                 {
                     var jsonElement = (JsonElement)value;
-                    switch (jsonElement.ValueKind)
-                    {
-                        case JsonValueKind.Null:
-                            _value = null;
-                            break;
-                        case JsonValueKind.String:
-                            _value = jsonElement.GetString();
-                            break;
-                        case JsonValueKind.Number:
-                            _value = jsonElement.GetDecimal();
-                            break;
-                    }
+                    SetValueFieldsFronJson(jsonElement);
                 }
                 else
                 {
-                    _value = value;
+                    SetValueFieldsFromObject(value);
                 }
             }
         }
-
-        [JsonIgnore]
-        public EntityActionType ActionType
+        private void SetValueFieldsFronJson(JsonElement jsonElement)
         {
-            get
+            switch (jsonElement.ValueKind)
             {
-                if (Enum.TryParse<EntityActionType>(ActionAsString, true, out EntityActionType actionType))
-                {
-                    return actionType;
-                }
-                else
-                {
-                    return EntityActionType.Unsupported;
-                }
+                case JsonValueKind.Null:
+                    PropertyType = PropertyType.Null;
+                    _value = null;
+                    break;
+                case JsonValueKind.String:
+                    PropertyType = PropertyType.String;
+                    _value = jsonElement.GetString();
+                    break;
+                case JsonValueKind.Number:
+                    PropertyType = PropertyType.Number;
+                    _value = jsonElement.GetDecimal();
+                    break;
+            }
+        }
+        private void SetValueFieldsFromObject(object? value)
+        {
+            if (value == null)
+            {
+                _value = null;
+                PropertyType = PropertyType.Null;
+                return;
+            }
+            if (value.GetType() == typeof(string))
+            {
+                PropertyType = PropertyType.String;
+                _value = value.ToString();
+            }
+            else
+            {
+                PropertyType = PropertyType.Number;
+                _value = Convert.ToDecimal(value);
             }
         }
     }

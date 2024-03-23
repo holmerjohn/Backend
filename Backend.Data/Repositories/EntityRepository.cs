@@ -1,4 +1,5 @@
 ﻿using Backend.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Data.Repositories
 {
@@ -11,11 +12,11 @@ namespace Backend.Data.Repositories
             _dbContext = dbContext;
         }
 
-        protected virtual async Task<T?> GeyByIdAsync(params object?[]? keyValues)
+        public virtual async Task<T?> GeyByIdAsync(string? identifier, CancellationToken cancellationToken = default)
         {
-            if (keyValues == null) return null;
+            if (identifier == null) return null;
 
-            return await _dbContext.Set<T>().FindAsync(keyValues);
+            return await _dbContext.Set<T>().SingleOrDefaultAsync(x => x.Id == identifier);
         }
 
         public virtual async Task SaveChangesAsync(CancellationToken cancellationToken = default)

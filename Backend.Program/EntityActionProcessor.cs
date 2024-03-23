@@ -34,7 +34,7 @@ namespace Backend.Program
         }
         private async Task<IEnumerable<string>> ApplyActionAsync(EntityAction action, CancellationToken cancellationToken)
         {
-            switch (action.ActionType)
+            switch (action.Action)
             {
                 case EntityActionType.CreateLoan:
                     {
@@ -49,6 +49,7 @@ namespace Backend.Program
                             throw new ApplicationException($"A Borrower with identier '{action.BorrowerIdentifier}' already exists for this loan.");
                         }
                         var borrower = await _borrowerRepository.GetByBorrowerIdentifierAsync(action.BorrowerIdentifier, cancellationToken);
+                        loan.Borrowers.Add(borrower);
                         borrower.Loans.Add(loan);
                         return new List<string>() { action.LoanIdentifier };
                     }

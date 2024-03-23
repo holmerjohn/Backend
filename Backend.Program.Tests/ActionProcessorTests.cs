@@ -25,7 +25,7 @@ namespace Backend.Program.Tests
 
             var actionList = new List<EntityAction>()
             {
-                new EntityAction() { ActionAsString = "createLoan", LoanIdentifier = "abc" }
+                new EntityAction() { Action = EntityActionType.CreateLoan, LoanIdentifier = "abc" }
             };
 
             await processor.ProcessEntityActionsAsync(actionList.AsEnumerable());
@@ -51,8 +51,8 @@ namespace Backend.Program.Tests
 
             var actionList = new List<EntityAction>()
             {
-                new EntityAction() { ActionAsString = "createLoan", LoanIdentifier = "abc" },
-                new EntityAction() { ActionAsString = "createBorrower", LoanIdentifier = "abc", BorrowerIdentifier = "def" }
+                new EntityAction() { Action = EntityActionType.CreateLoan, LoanIdentifier = "abc" },
+                new EntityAction() { Action = EntityActionType.CreateBorrower, LoanIdentifier = "abc", BorrowerIdentifier = "def" }
             };
 
             await processor.ProcessEntityActionsAsync(actionList.AsEnumerable());
@@ -80,8 +80,8 @@ namespace Backend.Program.Tests
 
             var actionList = new List<EntityAction>()
             {
-                new EntityAction() { ActionAsString = "createLoan", LoanIdentifier = "abc" },
-                new EntityAction() { ActionAsString = "setLoanField", LoanIdentifier = "abc", Field="loanAmount", Value = 100000 }
+                new EntityAction() { Action = EntityActionType.CreateLoan, LoanIdentifier = "abc" },
+                new EntityAction() { Action = EntityActionType.SetLoanField, LoanIdentifier = "abc", Field="loanAmount", Value = 100000 }
             };
 
             await processor.ProcessEntityActionsAsync(actionList.AsEnumerable());
@@ -90,9 +90,11 @@ namespace Backend.Program.Tests
             var loan = mockLoanRepository.LoanRepository.First();
             loan.Id.Should().Be("abc");
             loan.LoanProperties.Count.Should().Be(1);
+
             var loanProperty = loan.LoanProperties.First();
             loanProperty.Name.Should().Be("loanAmount");
-            loanProperty.ValueAsString.Should().Be("100000");
+            loanProperty.NumberValue.Should().Be(100000);
+            loanProperty.PropertyType.Should().Be(PropertyType.Number);
         }
 
         [Fact]
@@ -110,9 +112,9 @@ namespace Backend.Program.Tests
 
             var actionList = new List<EntityAction>()
             {
-                new EntityAction() { ActionAsString = "createLoan", LoanIdentifier = "abc" },
-                new EntityAction() { ActionAsString = "createBorrower", LoanIdentifier = "abc", BorrowerIdentifier = "def" },
-                new EntityAction() { ActionAsString = "setBorrowerField", BorrowerIdentifier = "def", Field="firstName", Value = "Devon" }
+                new EntityAction() { Action = EntityActionType.CreateLoan, LoanIdentifier = "abc" },
+                new EntityAction() { Action = EntityActionType.CreateBorrower, LoanIdentifier = "abc", BorrowerIdentifier = "def" },
+                new EntityAction() { Action = EntityActionType.SetBorrowerField, BorrowerIdentifier = "def", Field="firstName", Value = "Devon" }
             };
 
             await processor.ProcessEntityActionsAsync(actionList.AsEnumerable());
@@ -128,7 +130,7 @@ namespace Backend.Program.Tests
             var borrowerProperty = borrower.BorrowerProperties.First();
             borrowerProperty.BorrowerId.Should().Be("def");
             borrowerProperty.Name.Should().Be("firstName");
-            borrowerProperty.ValueAsString.Should().Be("Devon");
+            borrowerProperty.StringValue.Should().Be("Devon");
         }
 
         [Fact]
@@ -146,15 +148,15 @@ namespace Backend.Program.Tests
 
             var actionList = new List<EntityAction>()
             {
-                new EntityAction() { ActionAsString = "createLoan", LoanIdentifier = "abc" },
-                new EntityAction() { ActionAsString = "createBorrower", LoanIdentifier = "abc", BorrowerIdentifier = "def" },
-                new EntityAction() { ActionAsString = "createBorrower", LoanIdentifier = "abc", BorrowerIdentifier = "ggg" },
-                new EntityAction() { ActionAsString = "setLoanField", LoanIdentifier = "abc", Field="loanAmount", Value = 100000 },
-                new EntityAction() { ActionAsString = "setBorrowerField", BorrowerIdentifier = "def", Field="firstName", Value = "Devon" },
-                new EntityAction() { ActionAsString = "setBorrowerField", BorrowerIdentifier = "def", Field="lastName", Value = "Yang" },
-                new EntityAction() { ActionAsString = "setBorrowerField", BorrowerIdentifier = "ggg", Field="firstName", Value = "John" },
-                new EntityAction() { ActionAsString = "setBorrowerField", BorrowerIdentifier = "ggg", Field="lastName", Value = "Smith" },
-                new EntityAction() { ActionAsString = "setBorrowerField", BorrowerIdentifier = "ggg", Field="firstName", Value = null },
+                new EntityAction() { Action = EntityActionType.CreateLoan, LoanIdentifier = "abc" },
+                new EntityAction() { Action = EntityActionType.CreateBorrower, LoanIdentifier = "abc", BorrowerIdentifier = "def" },
+                new EntityAction() { Action = EntityActionType.CreateBorrower, LoanIdentifier = "abc", BorrowerIdentifier = "ggg" },
+                new EntityAction() { Action = EntityActionType.SetLoanField, LoanIdentifier = "abc", Field="loanAmount", Value = 100000 },
+                new EntityAction() { Action = EntityActionType.SetBorrowerField, BorrowerIdentifier = "def", Field="firstName", Value = "Devon" },
+                new EntityAction() { Action = EntityActionType.SetBorrowerField, BorrowerIdentifier = "def", Field="lastName", Value = "Yang" },
+                new EntityAction() { Action = EntityActionType.SetBorrowerField, BorrowerIdentifier = "ggg", Field="firstName", Value = "John" },
+                new EntityAction() { Action = EntityActionType.SetBorrowerField, BorrowerIdentifier = "ggg", Field="lastName", Value = "Smith" },
+                new EntityAction() { Action = EntityActionType.SetBorrowerField, BorrowerIdentifier = "ggg", Field="firstName", Value = null },
             };
 
             await processor.ProcessEntityActionsAsync(actionList.AsEnumerable());
@@ -167,13 +169,15 @@ namespace Backend.Program.Tests
             mockBorrowerRepository.BorrowerRepository.Count.Should().Be(2);
             var borrowerYang = mockBorrowerRepository.BorrowerRepository.First(x => x.Id == "def");
             borrowerYang.Id.Should().Be("def");
-            borrowerYang.BorrowerProperties.Single(x => x.Name == "firstName").ValueAsString.Should().Be("Devon");
-            borrowerYang.BorrowerProperties.Single(x => x.Name == "lastName").ValueAsString.Should().Be("Yang");
+            borrowerYang.Loans.Count.Should().Be(1);
+            borrowerYang.BorrowerProperties.Single(x => x.Name == "firstName").StringValue.Should().Be("Devon");
+            borrowerYang.BorrowerProperties.Single(x => x.Name == "lastName").StringValue.Should().Be("Yang");
 
             var borrowerSmith = mockBorrowerRepository.BorrowerRepository.First(x => x.Id == "ggg");
             borrowerSmith.Id.Should().Be("ggg");
-            borrowerSmith.BorrowerProperties.Single(x => x.Name == "firstName").ValueAsString.Should().BeNull();
-            borrowerSmith.BorrowerProperties.Single(x => x.Name == "lastName").ValueAsString.Should().Be("Smith");
+            borrowerSmith.Loans.Count.Should().Be(1);
+            borrowerSmith.BorrowerProperties.Single(x => x.Name == "firstName").StringValue.Should().BeNull();
+            borrowerSmith.BorrowerProperties.Single(x => x.Name == "lastName").StringValue.Should().Be("Smith");
         }
     }
 }

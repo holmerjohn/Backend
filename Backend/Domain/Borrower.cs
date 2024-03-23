@@ -24,15 +24,12 @@
                     Name = propertyName
                 };
 
-                if (value != null)
-                {
-                    property.ValueAsString = value.ToString();
-                }
+                property.SetPropertyValue(value);
                 BorrowerProperties.Add(property);
             }
             else
             {
-                property.ValueAsString = value?.ToString();
+                property.SetPropertyValue(value);
             }
         }
     }

@@ -2,10 +2,10 @@
 {
     public enum EntityActionType
     {
-        CreateLoan,
+        CreateLoan = 1,
         CreateBorrower,
         SetLoanField,
         SetBorrowerField,
-        Unsupported
+        Unsupported = 99
     }
 }

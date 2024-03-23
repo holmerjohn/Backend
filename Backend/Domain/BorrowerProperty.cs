@@ -1,11 +1,8 @@
 ﻿namespace Backend.Domain
 {
-    public class BorrowerProperty : Entity
+    public class BorrowerProperty : BaseProperty
     {
         public string BorrowerId { get; set; }
         public virtual Borrower Borrower { get; set; }
-        
-        public string Name { get; set; }
-        public string? ValueAsString { get; set; }
     }
 }
