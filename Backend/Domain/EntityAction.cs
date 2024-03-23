@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Backend.Enums;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Backend.Domain

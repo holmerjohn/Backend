@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using Backend.Enums;
+using System.Dynamic;
 using System.Text.Json.Serialization;
 
 namespace Backend.Domain

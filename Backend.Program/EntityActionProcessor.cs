@@ -1,4 +1,5 @@
 ﻿using Backend.Domain;
+using Backend.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace Backend.Program

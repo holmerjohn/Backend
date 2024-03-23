@@ -1,4 +1,4 @@
-﻿namespace Backend.Domain
+﻿namespace Backend.Enums
 {
     public enum PropertyType
     {
