@@ -1,5 +1,5 @@
 using Backend.Converters;
-using Backend.Domain;
+using Backend.Models;
 using Backend.Enums;
 using FluentAssertions;
 using System.Text.Json;
@@ -14,7 +14,9 @@ namespace Backend.Tests
             WriteIndented = true,
             Converters =
                 {
-                    new EntityActionTypeJsonConverter()
+                    new ConditionComparatorJsonConverter(),
+                    new EntityActionTypeJsonConverter(),
+                    new FactEntityTypeJsonConverter()
                 }
         };
 

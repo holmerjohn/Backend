@@ -7,17 +7,20 @@ namespace Backend.Program
         private readonly IActionEngine _actionEngine;
         private readonly IFactEngine _factEngine;
         private readonly ILoanActionProcessor _loanActionProcessor;
+        private readonly IResultsWriter _resultsWriter;
         private readonly BackendConfiguration _backendConfiguration;
 
         public Orchestrator(
             IActionEngine actionEngine,
             IFactEngine factEngine,
             ILoanActionProcessor loanActionProcessor,
+            IResultsWriter resultsWriter,
             BackendConfiguration backendConfiguration)
         {
             _actionEngine = actionEngine;
             _factEngine = factEngine;
             _loanActionProcessor = loanActionProcessor;
+            _resultsWriter = resultsWriter;
             _backendConfiguration = backendConfiguration;
         }
 
@@ -35,6 +38,7 @@ namespace Backend.Program
             }
 
             await _loanActionProcessor.ProcessEntityActionsAsync(_actionEngine.Actions);
+            await _resultsWriter.WriteResults();
         }
     }
 }

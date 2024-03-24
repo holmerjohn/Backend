@@ -62,8 +62,17 @@ namespace Backend.Program
                     services.AddScoped<IActionEngine, ActionEngine>();
                     services.AddScoped<ILoanActionProcessor, LoanActionProcessor>();
                     services.AddScoped<IFactEngine, FactEngine>();
-                    services.AddScoped<Orchestrator>();
 
+                    if (string.Equals(backendConfiguration.OutputBy, "BORROWER", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        services.AddScoped<IResultsWriter, ResultsByBorrowerWriter>();
+                    }
+                    else
+                    {
+                        services.AddScoped<IResultsWriter, ResultsByLoanWriter>();
+                    }
+
+                    services.AddScoped<Orchestrator>();
                 });
         }
 
@@ -71,7 +80,8 @@ namespace Backend.Program
         {
             var switchMappings = new Dictionary<string, string>()
             {
-                {"-dir", "directory" }
+                {"-dir", "directory" },
+                {"-by", "outputby" }
             };
 
             var configuration = new ConfigurationBuilder()
@@ -87,6 +97,7 @@ namespace Backend.Program
             bool.TryParse(configuration["EnableSensitiveSqlLogging"], out bool enableSensitiveSqlLogging);
             return new BackendConfiguration()
             {
+                OutputBy = configuration["outputby"] ?? "Loan",
                 EnableSensitiveSqlLogging = enableSensitiveSqlLogging,
                 ConnectionString = configuration.GetConnectionString("BackendDb"),
                 CurrentDirectory = configuration["directory"] ?? Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
