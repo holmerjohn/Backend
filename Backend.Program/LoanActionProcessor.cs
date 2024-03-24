@@ -32,7 +32,7 @@ namespace Backend.Program
         {
             foreach (var action in actions)
             {
-                (IEnumerable<Loan>?, IEnumerable<Borrower>?) results=  await ApplyActionAsync(action, cancellationToken);
+                (IEnumerable<Loan>?, IEnumerable<Borrower>?) results = await ApplyActionAsync(action, cancellationToken);
                 foreach (var loan in results.Item1 ?? Enumerable.Empty<Loan>())
                 {
                     await _factEngine.ProcessLoanFactsAsync(loan, cancellationToken);

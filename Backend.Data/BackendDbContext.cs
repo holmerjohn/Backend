@@ -21,6 +21,7 @@ namespace Backend.Data
             modelBuilder.ApplyConfiguration(new BorrowerPropertyEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new FactEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new FactConditionEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new FactStatusEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new LoanEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new LoanPropertyEntityTypeConfiguration());
         }

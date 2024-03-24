@@ -12,15 +12,18 @@ namespace Backend.Program
     {
 
         private readonly IFactRepository _factRepository;
+        private readonly IFactStatusRepository _factStatusRepository;
         private readonly ILogger<FactEngine> _logger;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public FactEngine(
             IFactRepository factRepository,
+            IFactStatusRepository factStatusRepository,
             ILogger<FactEngine> logger,
             JsonSerializerOptions jsonSerializerOptions)
         {
             _factRepository = factRepository;
+            _factStatusRepository = factStatusRepository;
             _logger = logger;
             _jsonSerializerOptions = jsonSerializerOptions;
         }
@@ -73,6 +76,8 @@ namespace Backend.Program
                 var satisfiesFact = ProcessLoanFact(ref factResults, fact, loan);
 
                 // Save the result to the database
+                var factStatus = await _factStatusRepository.GetByTypeEntityIdFactAsync(FactEntityType.Loan, loan.Id, fact, cancellationToken);
+                factStatus.Status = satisfiesFact;
             }
         }
 
@@ -86,6 +91,8 @@ namespace Backend.Program
                 var satisfiesFact = ProcessBorrowerFact(ref factResults, fact, borrower);
 
                 // Save the result to the database
+                var factStatus = await _factStatusRepository.GetByTypeEntityIdFactAsync(FactEntityType.Borrower, borrower.Id, fact, cancellationToken);
+                factStatus.Status = satisfiesFact;
             }
         }
 

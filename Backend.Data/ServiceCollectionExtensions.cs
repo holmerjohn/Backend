@@ -20,6 +20,7 @@ namespace Backend.Data
             services.AddScoped(typeof(IEntityRepository<>), typeof(EntityRepository<>));
             services.AddScoped<IBorrowerRepository, BorrowerRepository>();
             services.AddScoped<IFactRepository, FactRepository>();
+            services.AddScoped<IFactStatusRepository, FactStatusRepository>();
             services.AddScoped<ILoanRepository, LoanRepository>();
 
             return services;

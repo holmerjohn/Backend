@@ -16,6 +16,7 @@ using System.Threading;
 using System.Linq;
 using System.Collections.ObjectModel;
 using Backend.Extensions;
+using Backend.Program.Tests.MockRepositories;
 
 namespace Backend.Program.Tests
 {
@@ -61,10 +62,12 @@ namespace Backend.Program.Tests
             factRepositoryMock
                 .Setup(repo => repo.GetAllAsync(It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(fact.AsEnumerable()));
+            var mockFactStatusRepository = new MockFactStatusRepository();
             var loggerMock = new Mock<ILogger<FactEngine>>();
 
             var factEngine = new FactEngine(
                 factRepositoryMock.Object,
+                mockFactStatusRepository,
                 loggerMock.Object,
                 _jsonSerializerOptions);
 
