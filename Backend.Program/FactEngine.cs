@@ -5,7 +5,6 @@ using Backend.Extensions;
 using Backend.Repositories;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using Backend.Domain;
 
 namespace Backend.Program
 {
@@ -82,6 +81,66 @@ namespace Backend.Program
             }
         }
 
+        private bool ProcessLoanFact(ref IDictionary<string, bool> factResults, Fact fact, Loan loan)
+        {
+            var key = $"Loan-{fact.Name}";
+
+            _logger.LogDebug("Starting to evaluate loan '{loanId}' for fact '{factName}'", loan.Id, fact.Name);
+
+            if (factResults.ContainsKey(key))
+                return factResults[key];
+
+            bool satisfiesConditions = EvaluateLoanConditions(ref factResults, fact, loan);
+
+            Console.WriteLine($"{"Loan Fact ->".PadLeft(18)} {fact.Name.PadRight(40)} {loan.Id} : {satisfiesConditions}");
+
+            factResults[key] = satisfiesConditions;
+            return satisfiesConditions;
+        }
+
+        private bool EvaluateLoanConditions(ref IDictionary<string, bool> factResults, Fact fact, Loan loan)
+        {
+            // A fact without conditions is, by definition, false
+            if (!fact.Conditions.Any())
+                return false;
+
+            bool satisfiesConditions = true;
+            foreach (var condition in fact.Conditions)
+            {
+                // If it has already been determined, we should not have made it to this method
+                var property = loan.LoanProperties.SingleOrDefault(x => x.Name == condition.Field);
+                if (satisfiesConditions && property != null)
+                {
+                    satisfiesConditions &= condition.IsSatisfiedByProperty(property);
+                    continue;
+                }
+
+                // Is it a fact that hasn't been determined
+                var conditionFact = _factRepository.GetByName(condition.Field);
+                if (satisfiesConditions && conditionFact != null)
+                {
+                    // Be prepared for the rule to cross domain boundaries
+                    if (conditionFact.EntityType == FactEntityType.Loan)
+                    {
+                        satisfiesConditions &= EvaluateLoanConditions(ref factResults, conditionFact, loan);
+                    }
+                    else
+                    {
+                        foreach (var borrower in loan.Borrowers)
+                        {
+                            satisfiesConditions &= EvaluateBorrowerConditions(ref factResults, conditionFact, borrower);
+                        }
+                    }
+                    continue;
+                }
+
+                // No property or fact can resolve this condition, therefore it is false
+                satisfiesConditions = false;
+            };
+
+            return satisfiesConditions;
+        }
+
         public async Task ProcessBorrowerFactsAsync(Borrower borrower, CancellationToken cancellationToken = default)
         {
             IDictionary<string, bool> factResults = new Dictionary<string, bool>();
@@ -97,33 +156,16 @@ namespace Backend.Program
             }
         }
 
-        private bool ProcessLoanFact(ref IDictionary<string, bool> factResults, Fact fact, Loan loan)
-        {
-            var key = $"Loan-{fact.Name}";
-
-            _logger.LogTrace($"Starting to evaluate loan {loan.Id} for fact {fact.Name}");
-
-            if (factResults.ContainsKey(key))
-                return factResults[key];
-
-            bool satisfiesConditions = ProcessFact(ref factResults, fact, loan.LoanProperties.AsEnumerable());
-
-            Console.WriteLine($"{"Loan Fact ->".PadLeft(18)} {fact.Name.PadRight(40)} {loan.Id} : {satisfiesConditions}");
-
-            factResults[key] = satisfiesConditions;
-            return satisfiesConditions;
-        }
-
         private bool ProcessBorrowerFact(ref IDictionary<string, bool> factResults, Fact fact, Borrower borrower)
         {
             var key = $"Borrower-{borrower.Id}-{fact.Name}";
 
-            _logger.LogTrace($"Starting to evaluate borrower {borrower.Id} for fact {fact.Name}");
+            _logger.LogDebug("Starting to evaluate borrower {borrowerId} for fact {factName}", borrower.Id, fact.Name);
 
             if (factResults.ContainsKey(key))
                 return factResults[key];
 
-            bool satisfiesConditions = ProcessFact(ref factResults, fact, borrower.BorrowerProperties.AsEnumerable());
+            bool satisfiesConditions = EvaluateBorrowerConditions(ref factResults, fact, borrower);
 
             Console.WriteLine($"{"Borrower Fact ->".PadLeft(18)} {fact.Name.PadRight(40)} {borrower.Id} : {satisfiesConditions}");
 
@@ -131,7 +173,7 @@ namespace Backend.Program
             return satisfiesConditions;
         }
 
-        private bool ProcessFact(ref IDictionary<string, bool> factResults, Fact fact, IEnumerable<BaseProperty> entityProperties)
+        private bool EvaluateBorrowerConditions(ref IDictionary<string, bool> factResults, Fact fact, Borrower borrower)
         {
             // A fact without conditions is, by definition, false
             if (!fact.Conditions.Any())
@@ -141,7 +183,7 @@ namespace Backend.Program
             foreach (var condition in fact.Conditions)
             {
                 // If it has already been determined, we should not have made it to this method
-                var property = entityProperties.SingleOrDefault(x => x.Name == condition.Field);
+                var property = borrower.BorrowerProperties.SingleOrDefault(x => x.Name == condition.Field);
                 if (satisfiesConditions && property != null)
                 {
                     satisfiesConditions &= condition.IsSatisfiedByProperty(property);
@@ -152,7 +194,18 @@ namespace Backend.Program
                 var conditionFact = _factRepository.GetByName(condition.Field);
                 if (satisfiesConditions && conditionFact != null)
                 {
-                    satisfiesConditions &= ProcessFact(ref factResults, conditionFact, entityProperties);
+                    // Be prepared for the rule to cross domain boundaries
+                    if (conditionFact.EntityType == FactEntityType.Borrower)
+                    {
+                        satisfiesConditions &= EvaluateBorrowerConditions(ref factResults, conditionFact, borrower);
+                    }
+                    else
+                    {
+                        foreach (var loan in borrower.Loans)
+                        {
+                            satisfiesConditions &= EvaluateLoanConditions(ref factResults, conditionFact, loan);
+                        }
+                    }
                     continue;
                 }
 
@@ -162,8 +215,5 @@ namespace Backend.Program
 
             return satisfiesConditions;
         }
-
-
-
     }
 }

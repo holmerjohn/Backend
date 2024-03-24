@@ -33,6 +33,9 @@ namespace Backend.Program
         {
             foreach (var action in actions)
             {
+                _logger.LogDebug("Processing EntityAction {entityAction}.  Loan {loanId}  Borrower {borrowerId}  Value {actionValue}", 
+                    action.Action, action.LoanIdentifier, action.BorrowerIdentifier, action.Value);
+
                 (IEnumerable<Loan>?, IEnumerable<Borrower>?) results = await ApplyActionAsync(action, cancellationToken);
                 foreach (var loan in results.Item1 ?? Enumerable.Empty<Loan>())
                 {
