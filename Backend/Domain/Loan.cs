@@ -1,4 +1,5 @@
-﻿using Backend.Enums;
+﻿using Backend.Domain.Facts;
+using Backend.Enums;
 using System.Dynamic;
 
 namespace Backend.Domain
@@ -37,7 +38,6 @@ namespace Backend.Domain
             }
         }
 
-        
         public dynamic ToDynamic()
         {
             var loan = new ExpandoObject() as IDictionary<string, object>;

@@ -1,4 +1,5 @@
 ﻿using Backend.Domain;
+using Backend.Domain.Facts;
 
 namespace Backend
 {
@@ -6,5 +7,6 @@ namespace Backend
     {
         Task LoadFactsAsync(Stream utf8json, CancellationToken cancellationToken = default);
         Task ProcessLoanFactsAsync(Loan loan, CancellationToken cancellationToken = default);
+        Task ProcessBorrowerFactsAsync(Borrower borrower, CancellationToken cancellationToken = default);
     }
 }

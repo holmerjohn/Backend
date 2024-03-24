@@ -4,6 +4,8 @@ namespace Backend.Repositories
 {
     public interface IFactRepository : IEntityRepository<Fact>
     {
-        Task<Fact> GetByNameAsync(string? factIdentifier, CancellationToken cancellationToken = default);
+        Fact? GetByName(string? name);
+        Task<Fact?> GetByNameAsync(string? name, CancellationToken cancellationToken = default);
+        Task<IEnumerable<Fact>> GetAllAsync(CancellationToken cancellationToken = default);
     }
 }

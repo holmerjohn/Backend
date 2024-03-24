@@ -1,4 +1,6 @@
-﻿namespace Backend.Domain
+﻿using Backend.Domain.Facts;
+
+namespace Backend.Domain
 {
     public class Borrower : Entity
     {

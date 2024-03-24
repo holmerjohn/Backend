@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using Backend.Enums;
+using Backend.Program.Tests.MockRepositories;
 
 namespace Backend.Program.Tests
 {

@@ -1,5 +1,6 @@
 ﻿using Backend.Domain;
 using Backend.Enums;
+using Backend.Extensions;
 using Backend.Repositories;
 using Microsoft.Extensions.Logging;
 
@@ -31,22 +32,29 @@ namespace Backend.Program
         {
             foreach (var action in actions)
             {
-                IEnumerable<string> affectedLoans = await ApplyActionAsync(action, cancellationToken);
-
-
+                (IEnumerable<Loan>?, IEnumerable<Borrower>?) results=  await ApplyActionAsync(action, cancellationToken);
+                foreach (var loan in results.Item1 ?? Enumerable.Empty<Loan>())
+                {
+                    await _factEngine.ProcessLoanFactsAsync(loan, cancellationToken);
+                }
+                foreach (var borrower in results.Item2 ?? Enumerable.Empty<Borrower>())
+                {
+                    await _factEngine.ProcessBorrowerFactsAsync(borrower, cancellationToken);
+                }
                 await _loanRepository.SaveChangesAsync();
             }
-            
-
         }
-        private async Task<IEnumerable<string>> ApplyActionAsync(EntityAction action, CancellationToken cancellationToken)
+
+        #region Private Methods
+
+        private async Task<(IEnumerable<Loan>?, IEnumerable<Borrower>?)> ApplyActionAsync(EntityAction action, CancellationToken cancellationToken)
         {
             switch (action.Action)
             {
                 case EntityActionType.CreateLoan:
                     {
-                        await _loanRepository.GetByLoanIdentifierAsync(action.LoanIdentifier, cancellationToken);
-                        return new List<string>() { action.LoanIdentifier };
+                        var loan = await _loanRepository.GetByLoanIdentifierAsync(action.LoanIdentifier, cancellationToken);
+                        return (null, null);
                     }
                 case EntityActionType.CreateBorrower:
                     {
@@ -58,19 +66,19 @@ namespace Backend.Program
                         var borrower = await _borrowerRepository.GetByBorrowerIdentifierAsync(action.BorrowerIdentifier, cancellationToken);
                         loan.Borrowers.Add(borrower);
                         borrower.Loans.Add(loan);
-                        return new List<string>() { action.LoanIdentifier };
+                        return (loan.AsEnumerable(), borrower.AsEnumerable());
                     }
                 case EntityActionType.SetLoanField:
                     {
                         var loan = await _loanRepository.GetByLoanIdentifierAsync(action.LoanIdentifier, cancellationToken);
                         loan.SetProperty(action.Field, action.Value);
-                        return new List<string>() { action.LoanIdentifier };
+                        return (loan.AsEnumerable(), loan.Borrowers.AsEnumerable());
                     }
                 case EntityActionType.SetBorrowerField:
                     {
                         var borrower = await _borrowerRepository.GetByBorrowerIdentifierAsync(action.BorrowerIdentifier, cancellationToken);
                         borrower.SetProperty(action.Field, action.Value);
-                        return borrower.Loans.Select(x => x.Id);
+                        return (borrower.Loans.AsEnumerable(), borrower.AsEnumerable());
                     }
                 default:
                     {
@@ -78,5 +86,7 @@ namespace Backend.Program
                     }
             }
         }
+
+        #endregion
     }
 }

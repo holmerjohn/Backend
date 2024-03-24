@@ -27,12 +27,12 @@ namespace Backend.Program
                 {
                     var jsonElement = (JsonElement)inputAction.Value;
                     pt = jsonElement.GetPropertyType();
-                    value = GetValueFromJson(jsonElement);
+                    value = jsonElement.GetValueFromJson();
                 }
                 else
                 {
                     pt = inputAction.Value.GetPropertyType();
-                    value = GetValueFromObject(inputAction.Value);
+                    value = inputAction.Value.GetValueFromObject();
                 }
 
                 return new EntityAction()
@@ -46,33 +46,6 @@ namespace Backend.Program
                 };
             }).AsEnumerable();
         }
-
-        private object? GetValueFromJson(JsonElement jsonElement)
-        {
-            switch (jsonElement.ValueKind)
-            {
-                case JsonValueKind.Null:
-                    return null;
-                case JsonValueKind.String:
-                    return jsonElement.GetString();
-                case JsonValueKind.Number:
-                    return jsonElement.GetDecimal();
-                default:
-                    return null;
-            }
-        }
-
-        private object? GetValueFromObject(object? value)
-        {
-            switch (value)
-            {
-                case null:
-                    return null;
-                case string _:
-                    return value.ToString();
-                default:
-                    return Convert.ToDecimal(value);
-            }
-        }
+       
     }
 }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Backend.Program.Tests
+namespace Backend.Program.Tests.MockRepositories
 {
     internal class MockLoanRepository : ILoanRepository
     {

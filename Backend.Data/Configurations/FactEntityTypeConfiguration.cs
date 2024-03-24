@@ -27,7 +27,7 @@ namespace Backend.Data.Configurations
             builder.HasKey(e => e.Id);
 
             builder.HasMany(fact => fact.Conditions)
-                .WithOne(factCondition => factCondition.Fact)
+                .WithOne()
                 .HasForeignKey(factCondition => factCondition.FactId);
         }
     }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Backend.Domain;
 using Backend.Repositories;
 
-namespace Backend.Program.Tests
+namespace Backend.Program.Tests.MockRepositories
 {
     internal class MockBorrowerRepository : IBorrowerRepository
     {

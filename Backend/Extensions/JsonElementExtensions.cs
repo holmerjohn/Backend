@@ -20,5 +20,23 @@ namespace Backend.Extensions
                     return PropertyType.Null;
             }
         }
+
+        public static object? GetValueFromJson(this JsonElement jsonElement)
+        {
+            switch (jsonElement.ValueKind)
+            {
+                case JsonValueKind.Null:
+                    return null;
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                    return jsonElement.GetBoolean();
+                case JsonValueKind.String:
+                    return jsonElement.GetString();
+                case JsonValueKind.Number:
+                    return jsonElement.GetDecimal();
+                default:
+                    return null;
+            }
+        }
     }
 }

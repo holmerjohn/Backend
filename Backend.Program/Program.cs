@@ -36,6 +36,8 @@ namespace Backend.Program
             var backendConfiguration = GetBackendConfiguration(configuration);
 
             return Host.CreateDefaultBuilder()
+                .ConfigureLogging((context, config) =>
+                    config.AddConfiguration(context.Configuration.GetSection("Logging")))
                 .ConfigureServices((_, services) =>
                 {
                     services.AddLogging(loggingBuilder =>

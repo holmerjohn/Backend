@@ -14,8 +14,23 @@ namespace Backend.Extensions
                     return PropertyType.String;
                 case bool _:
                     return PropertyType.Boolean;
-                default: 
+                default:
                     return PropertyType.Number;
+            }
+        }
+
+        public static object? GetValueFromObject(this object? value)
+        {
+            switch (value)
+            {
+                case null:
+                    return null;
+                case string _:
+                    return value.ToString();
+                case bool _:
+                    return Convert.ToBoolean(value);
+                default:
+                    return Convert.ToDecimal(value);
             }
         }
     }
