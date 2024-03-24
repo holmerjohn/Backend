@@ -1,4 +1,4 @@
-﻿using Backend.Domain;
+﻿using Backend.Domain.Loans;
 
 namespace Backend.Repositories
 {

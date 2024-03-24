@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Backend.Domain;
+using Backend.Domain.Loans;
 using Backend.Repositories;
 
 namespace Backend.Program.Tests.MockRepositories

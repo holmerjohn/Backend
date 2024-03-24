@@ -1,4 +1,5 @@
 ﻿using Backend.Domain;
+using Backend.Domain.Loans;
 using Backend.Enums;
 using Backend.Extensions;
 using Backend.Repositories;

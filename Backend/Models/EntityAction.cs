@@ -24,8 +24,8 @@ namespace Backend.Models
             init 
             {
                 /* 
-                 * When deserializing, it will save the actual JsonElement object
-                 * to the object's value field.  We want the actual value.
+                 * When deserializing, JsonSerializer will save the actual JsonElement object
+                 * to the object's value field.  We want the element's value.
                  * */
                 if (value?.GetType() == typeof(JsonElement))
                 {

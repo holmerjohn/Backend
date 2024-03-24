@@ -22,6 +22,9 @@ namespace Backend.Program
 
         public async Task WriteResults(CancellationToken cancellationToken = default)
         {
+            Console.WriteLine();
+            Console.WriteLine();
+
             var factStatuses = await _factStatusRepository.GetAllFactStatusAsync();
 
             foreach (var loanGrouping in factStatuses

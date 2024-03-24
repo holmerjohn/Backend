@@ -1,6 +1,7 @@
 ﻿using Backend.Converters;
 using Backend.Domain;
 using Backend.Domain.Facts;
+using Backend.Domain.Loans;
 using Backend.Enums;
 using FluentAssertions;
 using System.Text.Json;

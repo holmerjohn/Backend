@@ -1,4 +1,4 @@
-﻿namespace Backend.Domain
+﻿namespace Backend.Domain.Loans
 {
     public class LoanProperty : BaseProperty
     {

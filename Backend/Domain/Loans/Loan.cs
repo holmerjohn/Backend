@@ -1,8 +1,7 @@
-﻿using Backend.Domain.Facts;
-using Backend.Enums;
+﻿using Backend.Enums;
 using System.Dynamic;
 
-namespace Backend.Domain
+namespace Backend.Domain.Loans
 {
     public class Loan : Entity
     {

@@ -1,10 +1,11 @@
-﻿using Backend.Domain;
+﻿using Backend.Domain.Loans;
 using Backend.Domain.Facts;
 using Backend.Enums;
 using Backend.Extensions;
 using Backend.Repositories;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using Backend.Domain;
 
 namespace Backend.Program
 {
@@ -107,7 +108,7 @@ namespace Backend.Program
 
             bool satisfiesConditions = ProcessFact(ref factResults, fact, loan.LoanProperties.AsEnumerable());
 
-            Console.WriteLine($"{loan.Id.PadRight(25)} {fact.Name.PadRight(40)} {satisfiesConditions}");
+            Console.WriteLine($"{"Loan Fact ->".PadLeft(18)} {fact.Name.PadRight(40)} {loan.Id} : {satisfiesConditions}");
 
             factResults[key] = satisfiesConditions;
             return satisfiesConditions;
@@ -124,7 +125,7 @@ namespace Backend.Program
 
             bool satisfiesConditions = ProcessFact(ref factResults, fact, borrower.BorrowerProperties.AsEnumerable());
 
-            Console.WriteLine($"{borrower.Id.PadRight(25)} {fact.Name.PadRight(40)} {satisfiesConditions}");
+            Console.WriteLine($"{"Borrower Fact ->".PadLeft(18)} {fact.Name.PadRight(40)} {borrower.Id} : {satisfiesConditions}");
 
             factResults[key] = satisfiesConditions;
             return satisfiesConditions;

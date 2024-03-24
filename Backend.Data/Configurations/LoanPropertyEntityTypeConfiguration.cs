@@ -1,4 +1,4 @@
-﻿using Backend.Domain;
+﻿using Backend.Domain.Loans;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

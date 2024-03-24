@@ -17,6 +17,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using Backend.Extensions;
 using Backend.Program.Tests.MockRepositories;
+using Backend.Domain.Loans;
 
 namespace Backend.Program.Tests
 {
