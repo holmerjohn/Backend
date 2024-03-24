@@ -8,11 +8,36 @@ using System.Threading.Tasks;
 using System.Linq;
 using Backend.Enums;
 using Backend.Program.Tests.MockRepositories;
+using System;
 
 namespace Backend.Program.Tests
 {
     public class ActionProcessorTests
     {
+        [Fact]
+        public async Task ShouldThrowOn_Unsupported()
+        {
+            var mockLoanRepository = new MockLoanRepository();
+            var factEngineMock = new Mock<IFactEngine>();
+            var loggerMock = new Mock<ILogger<LoanActionProcessor>>();
+
+
+            ILoanActionProcessor processor = new LoanActionProcessor(
+                mockLoanRepository,
+                new MockBorrowerRepository(),
+                factEngineMock.Object,
+                loggerMock.Object,
+                new BackendConfiguration());
+
+            var actionList = new List<EntityAction>()
+            {
+                new EntityAction() { Action = EntityActionType.Unsupported, LoanIdentifier = "abc" }
+            };
+
+            var actualResult = await Record.ExceptionAsync(() => processor.ProcessEntityActionsAsync(actionList.AsEnumerable()));
+            actualResult.Should().BeOfType<ApplicationException>();
+        }
+
         [Fact]
         public async Task ShouldProcess_CreateLoan()
         {

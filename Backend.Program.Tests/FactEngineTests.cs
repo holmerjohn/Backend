@@ -1,23 +1,18 @@
 ﻿using Backend.Converters;
-using Backend.Domain;
-using Backend.Enums;
-using FluentAssertions;
-using System.Text.Json;
-using Xunit;
-using Moq;
-using System.Threading.Tasks;
-using Backend.Program;
-using Backend.Repositories;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System;
 using Backend.Domain.Facts;
-using System.Threading;
-using System.Linq;
-using System.Collections.ObjectModel;
+using Backend.Domain.Loans;
+using Backend.Enums;
 using Backend.Extensions;
 using Backend.Program.Tests.MockRepositories;
-using Backend.Domain.Loans;
+using Backend.Repositories;
+using Microsoft.Extensions.Logging;
+using Moq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace Backend.Program.Tests
 {
